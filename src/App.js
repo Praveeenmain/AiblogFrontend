@@ -11,13 +11,14 @@ import Register from './components/Register';
 import NewPost from './components/NewPost';
 import PostList from './components/PostList';
 import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './components/Profile';
 import './App.css';
 
 // Firebase configuration
 
 
 // API URL - update this to match your backend
-export const API_URL = 'http://localhost:3001';
+export const API_URL = 'https://aiblogbackend-ia9h.onrender.com';
 
 function App() {
   return (
@@ -32,6 +33,11 @@ function App() {
             <Route path="/dashboard" element={
               <ProtectedRoute  auth={auth} >
                 <Dashboard auth={auth} />
+              </ProtectedRoute>
+            } />
+              <Route path="/Profile" element={
+              <ProtectedRoute  auth={auth} >
+                <Profile auth={auth} />
               </ProtectedRoute>
             } />
             <Route path="/posts" element={<PostList />} />

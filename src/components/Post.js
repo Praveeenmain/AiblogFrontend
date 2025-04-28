@@ -1,36 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../App';
 import '../styles/Post.css';
-import { auth } from './firebase'; // Firebase auth import
+import { auth } from './firebase';
 
 const Post = ({ post }) => {
-  const [user, setUser] = useState(null); // State to store current user
-  const [isEditing, setIsEditing] = useState(false); // To toggle edit mode
+  const [user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
-  const [file, setFile] = useState(null); // State to store the selected file
-  const [likes, setLikes] = useState(post.likes?.length || 0); // State for the like count
-  const [comments, setComments] = useState(post.comments || []); // State for storing comments
-  const [newComment, setNewComment] = useState(""); // State for new comment input
-  const [hasLiked, setHasLiked] = useState(false); // Track if current user has liked the post
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false); // Track if comments are visible
+  const [file, setFile] = useState(null);
+  const [likes, setLikes] = useState(post.likes?.length || 0);
+  const [comments, setComments] = useState(post.comments || []);
+  const [newComment, setNewComment] = useState("");
+  const [hasLiked, setHasLiked] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-  // Fetch the current user from Firebase
+  // AI Tools
+  const [sentiment, setSentiment] = useState(null);
+  const [summary, setSummary] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const [showAiTools, setShowAiTools] = useState(false);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user); // Set the current user in state
-      
-      // Check if this user has already liked the post
-      if (user && post.likes && post.likes.includes(user.uid)) {
+      setUser(user);
+      if (user && post.likes?.includes(user.uid)) {
         setHasLiked(true);
       }
     });
-
-    // Clean up the subscription when component unmounts
     return () => unsubscribe();
   }, [post.likes]);
 
-  // Fetch comments when the component mounts
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -43,30 +44,26 @@ const Post = ({ post }) => {
         console.error('Error fetching comments:', err);
       }
     };
-
     fetchComments();
   }, [post._id]);
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
 
   const handleDelete = async () => {
     try {
       const idToken = await user.getIdToken();
-
       const response = await fetch(`${API_URL}/posts/${post._id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-        },
+        headers: { 'Authorization': `Bearer ${idToken}` },
       });
-
       const data = await response.json();
       if (response.ok) {
         alert('Post deleted successfully');
-        // You might want to refresh the page or update the post list
         window.location.reload();
       } else {
         alert(data.error || 'Failed to delete post.');
@@ -76,41 +73,29 @@ const Post = ({ post }) => {
     }
   };
 
-  const handleEdit = () => {
-    // Toggle edit mode
-    setIsEditing(true);
-  };
+  const handleEdit = () => setIsEditing(true);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // Update file state when a file is selected
-  };
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
     try {
       const idToken = await user.getIdToken();
-      
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
-      if (file) {
-        formData.append('file', file);
-      }
+      if (file) formData.append('file', file);
 
       const response = await fetch(`${API_URL}/posts/${post._id}`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-        },
+        headers: { 'Authorization': `Bearer ${idToken}` },
         body: formData,
       });
 
       const data = await response.json();
       if (response.ok) {
         alert('Post updated successfully');
-        setIsEditing(false); // Exit edit mode
-        // Refresh the page to show the updated post
+        setIsEditing(false);
         window.location.reload();
       } else {
         alert(data.error || 'Failed to update post.');
@@ -120,16 +105,10 @@ const Post = ({ post }) => {
     }
   };
 
-  // Handle Like functionality
   const handleLike = async () => {
-    if (hasLiked) {
-      alert('You have already liked this post.');
-      return;
-    }
-
+    if (hasLiked) return alert('You have already liked this post.');
     try {
       const idToken = await user.getIdToken();
-      
       const response = await fetch(`${API_URL}/posts/${post._id}/like`, {
         method: 'POST',
         headers: {
@@ -150,27 +129,19 @@ const Post = ({ post }) => {
     }
   };
 
-  // Handle Share functionality
   const handleShare = async () => {
     try {
       const idToken = await user.getIdToken();
-      
-      // Call the backend share endpoint
       const response = await fetch(`${API_URL}/posts/${post._id}/share`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${idToken}`,
-        }
+        headers: { 'Authorization': `Bearer ${idToken}` }
       });
-
-      const data = await response.json();
       if (response.ok) {
-        // Copy link to clipboard 
         const url = `${window.location.origin}/posts/${post._id}`;
-        navigator.clipboard.writeText(url).then(() => {
-          alert('Post shared successfully and link copied to clipboard');
-        });
+        await navigator.clipboard.writeText(url);
+        alert('Post shared and link copied to clipboard');
       } else {
+        const data = await response.json();
         alert(data.error || 'Failed to share post.');
       }
     } catch (err) {
@@ -178,20 +149,14 @@ const Post = ({ post }) => {
     }
   };
 
-  // Toggle comments visibility
-  const toggleComments = () => {
-    setIsCommentsOpen(!isCommentsOpen);
-  };
+  const toggleComments = () => setIsCommentsOpen(!isCommentsOpen);
 
-  // Handle Comment functionality
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-
     if (!newComment.trim()) return;
-    
+
     try {
       const idToken = await user.getIdToken();
-      
       const response = await fetch(`${API_URL}/posts/${post._id}/comment`, {
         method: 'POST',
         headers: {
@@ -203,24 +168,46 @@ const Post = ({ post }) => {
 
       const data = await response.json();
       if (response.ok) {
-        // Add the new comment to the UI
-        const newCommentObj = {
-          userId: user.uid,
-          userName: user.displayName || user.email,
-          comment: newComment,
-          createdAt: new Date()
-        };
-        
-        setComments([...comments, newCommentObj]);
-        setNewComment(""); // Reset comment input
-        if (!isCommentsOpen) {
-          setIsCommentsOpen(true); // Open comments when submitting a new comment
-        }
+        setComments([
+          ...comments,
+          {
+            userId: user.uid,
+            userName: user.displayName || user.email,
+            comment: newComment,
+            createdAt: new Date()
+          }
+        ]);
+        setNewComment("");
+        if (!isCommentsOpen) setIsCommentsOpen(true);
       } else {
         alert(data.error || 'Failed to post comment.');
       }
     } catch (err) {
       alert('Error posting comment.');
+    }
+  };
+
+  const toggleAiTools = () => setShowAiTools(!showAiTools);
+
+  const handleAnalyzeSentiment = async () => {
+    setIsAnalyzing(true);
+    try {
+      const response = await fetch(`${API_URL}/api/analyze/post/${post._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error((await response.json()).error);
+      const result = await response.json();
+      console.log(result)
+      setSentiment(result.sentiment);
+      setSummary(result.summary);  // Fix: Ensure summary is properly received
+    } catch (error) {
+      console.error('Sentiment analysis failed:', error.message);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -232,44 +219,59 @@ const Post = ({ post }) => {
         <span>{formatDate(post.createdAt)}</span>
       </div>
       <div className="post-content">{post.content}</div>
-      
-      {/* Check if media exists and render accordingly */}
-      {post.media && post.media.contentType && (
+
+      {post.media?.contentType && (
         <div className="post-media">
           {post.media.contentType.startsWith('image/') ? (
-            <img 
-              src={`${API_URL}/media/${post.media.fileId}`} 
-              alt={post.title} 
-            />
+            <img src={`${API_URL}/media/${post.media.fileId}`} alt={post.title} />
           ) : post.media.contentType.startsWith('video/') ? (
             <video controls>
-              <source 
-                src={`${API_URL}/media/${post.media.fileId}`} 
-                type={post.media.contentType} 
-              />
-              Your browser does not support the video tag.
+              <source src={`${API_URL}/media/${post.media.fileId}`} type={post.media.contentType} />
             </video>
           ) : (
-            <a 
-              href={`${API_URL}/media/${post.media.fileId}`} 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
+            <a href={`${API_URL}/media/${post.media.fileId}`} target="_blank" rel="noopener noreferrer">
               Download {post.media.fileName}
             </a>
           )}
         </div>
       )}
 
-      {/* Like, Share, and Comment */}
       <div className="post-actions">
         <button onClick={handleLike} disabled={!user || hasLiked}>
           {hasLiked ? 'Liked' : 'Like'} ({likes})
         </button>
         <button onClick={handleShare} disabled={!user}>Share</button>
+        <button onClick={toggleAiTools}>AI Tools {showAiTools ? '▲' : '▼'}</button>
       </div>
 
-      {/* Comments Toggle Button */}
+      {showAiTools && (
+        <div className="ai-tools">
+          <div className="ai-buttons">
+            <button onClick={handleAnalyzeSentiment} disabled={isAnalyzing}>
+              {isAnalyzing ? 'Analyzing...' : 'Analyze Sentiment'}
+            </button>
+          </div>
+          {sentiment && (
+            <div className="ai-result sentiment-result">
+              <h4>Sentiment:</h4>
+              <p>
+                This post seems 
+                <strong className={sentiment === 'positive' ? 'positive' : 'negative'}>
+              {sentiment.toLowerCase()}
+            </strong>
+              
+              </p>
+            </div>
+          )}
+          {summary && (
+            <div className="ai-result summary-result">
+              <h4>Summary:</h4>
+              <p>{summary}</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <button className="comments-toggle" onClick={toggleComments}>
         <span className={`comments-toggle-icon ${isCommentsOpen ? 'open' : ''}`}>▼</span>
         <span className="comments-count">
@@ -277,7 +279,6 @@ const Post = ({ post }) => {
         </span>
       </button>
 
-      {/* Comment Section */}
       <div className={`post-comments ${isCommentsOpen ? 'open' : 'closed'}`}>
         <h4>Comments:</h4>
         <ul>
@@ -306,7 +307,6 @@ const Post = ({ post }) => {
         )}
       </div>
 
-      {/* Only show edit and delete if the logged-in user is the author */}
       {user && post.author.uid === user.uid && (
         <div className="post-actions post-owner-actions">
           <button onClick={handleEdit}>Edit</button>
@@ -314,7 +314,6 @@ const Post = ({ post }) => {
         </div>
       )}
 
-      {/* Show edit form when isEditing is true */}
       {isEditing && (
         <form onSubmit={handleUpdate} className="edit-post-form">
           <input
@@ -330,13 +329,12 @@ const Post = ({ post }) => {
             placeholder="Edit content"
             required
           />
-          <input
-            type="file"
-            onChange={handleFileChange}
-          />
+          <input type="file" onChange={handleFileChange} />
           <div className="edit-actions">
             <button type="submit">Update Post</button>
-            <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+            <button type="button" onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
           </div>
         </form>
       )}

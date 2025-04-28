@@ -1,74 +1,111 @@
 /* Header Styles */
 header {
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px 0;
-    margin-bottom: 30px;
-  }
-  
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0); /* Blue gradient */
+  box-shadow: 0 4px 15px rgba(63, 81, 181, 0.3); /* Softer and deeper shadow */
+  padding: 25px 0;
+  margin-bottom: 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: background 0.3s ease;
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+header h1 {
+  color: #ffffff; /* White text for better contrast */
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: font-size 0.3s ease, color 0.3s ease;
+}
+
+header h1 a {
+  text-decoration: none;
+  color: #ffffff;
+  font-size: inherit;
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 25px;
+  align-items: center;
+}
+
+header nav ul li a {
+  text-decoration: none;
+  color: #e3f2fd; /* Light blue for nav links */
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+header nav ul li a:hover {
+  color: #ffffff; /* Hover to white */
+  transform: translateY(-3px); /* Slight hover lift effect */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-logout {
+  background-color: #ff5252; /* Slightly brighter red logout button */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #e53935;
+  transform: scale(1.05); /* Slight button enlargement on hover */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
   header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 20px;
   }
   
   header h1 {
-    color: #3f51b5;
     font-size: 24px;
-  }
-  
-  header h1 a {
-    text-decoration: none;
-    color: #3f51b5;
+    text-align: center;
   }
   
   header nav ul {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px 30px;
   }
-  
-  header nav ul li a {
-    text-decoration: none;
-    color: #555;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  
-  header nav ul li a:hover {
-    color: #3f51b5;
-  }
-  
+
   .user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    gap: 10px;
+    justify-content: center;
   }
-  
+
   .btn-logout {
-    background-color: #f44336;
-    color: white;
+    padding: 8px 18px;
   }
-  
-  .btn-logout:hover {
-    background-color: #d32f2f;
+}
+
+/* Background change effect on scroll */
+@media (max-width: 768px) {
+  header {
+    background: linear-gradient(135deg, #3f51b5, #3949ab); /* Slightly darker on scroll */
   }
-  
-  /* Responsive styles */
-  @media (max-width: 768px) {
-    header .container {
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    header h1 {
-      font-size: 20px;
-    }
-    
-    header nav ul {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px 20px;
-    }
-  }
+}

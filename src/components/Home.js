@@ -9,7 +9,7 @@ const Home = () => {
         <h2>Welcome to the Blog Website</h2>
         <p>Share your thoughts and experiences with the world.</p>
         <div className="hero-buttons">
-          <Link to="/posts" className="btn-primary">Browse Posts</Link>
+          <Link to="/posts" className="btn-secondary">Browse Posts</Link>
           <Link to="/new-post" className="btn-secondary">Create a Post</Link>
         </div>
       </div>

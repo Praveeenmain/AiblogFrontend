@@ -1,51 +1,205 @@
 /* New Post Form Styling */
 .new-post {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-radius: 12px; /* Slightly more rounded corners */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+  margin-bottom: 40px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.new-post:hover {
+  transform: translateY(-5px); /* Subtle hover effect */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12); /* Stronger shadow on hover */
+}
+
+.new-post h2 {
+  margin-bottom: 20px;
+  color: #3f51b5;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.new-post .btn-primary {
+  width: 100%;
+  max-width: 220px;
+  margin: 20px auto 0;
+  display: block;
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.new-post .btn-primary:hover {
+  background-color: #007bff;
+  transform: translateY(-3px); /* Hover effect */
+}
+
+.new-post .btn-primary:disabled {
+  background-color: #a1a1a1;
+  cursor: not-allowed;
+}
+
+/* File upload styling */
+input[type="file"] {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+input[type="file"]:focus {
+  border-color: #3f51b5;
+  outline: none;
+}
+
+/* Custom file button styling */
+input[type="file"]::file-selector-button {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin-right: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #d0d0d0;
+}
+
+/* Suggested Tags Section */
+.suggested-tags {
+  margin: 20px 0;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: box-shadow 0.3s ease;
+}
+
+.suggested-tags:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Hover effect */
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tag {
+  padding: 6px 12px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.tag:hover {
+  background-color: #d0d0d0;
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.tag.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.selected-tag {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 20px;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.remove-tag:hover {
+  color: #ff5252; /* Hover to red on remove */
+}
+
+/* Tag Help Text */
+.tag-help {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Secondary Button Styling */
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-top: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-secondary:disabled {
+  background-color: #a1a1a1;
+  cursor: not-allowed;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .new-post {
+    padding: 20px;
   }
-  
+
   .new-post h2 {
-    margin-bottom: 20px;
-    color: #3f51b5;
+    font-size: 22px;
   }
-  
+
   .new-post .btn-primary {
     width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
-    display: block;
+    max-width: 300px; /* Improved button width on small screens */
   }
-  
-  /* File upload styling */
-  input[type="file"] {
-    padding: 8px;
+
+  .tags-container {
+    flex-direction: column;
   }
-  
-  input[type="file"]::file-selector-button {
-    background-color: #e0e0e0;
-    color: #333;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    margin-right: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+
+  .selected-tags {
+    flex-direction: column;
   }
-  
-  input[type="file"]::file-selector-button:hover {
-    background-color: #d0d0d0;
+
+  .tag {
+    font-size: 14px;
   }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .new-post {
-      padding: 20px;
-    }
-    
-    .new-post .btn-primary {
-      width: 100%;
-    }
+
+  .selected-tag {
+    font-size: 14px;
   }
+}

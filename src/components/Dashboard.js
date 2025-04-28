@@ -3,40 +3,51 @@ import { Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { API_URL } from '../App';
 import Post from './Post';
+import TextGenerator from '../components/TextGenerator';
 import "../styles/Dashboard.css";
+
+// Import AI service functions
+const analyzePost = async (postId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/api/analyze/post/${postId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error analyzing post:', error);
+    throw error;
+  }
+};
 
 const Dashboard = ({ auth }) => {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [authError, setAuthError] = useState(null);
   const [token, setToken] = useState(null);
 
-  useEffect(() => {
-    console.log("Dashboard mounted");
+  // Display state for content sections
+  const [activeTab, setActiveTab] = useState('posts'); // 'posts', 'generator'
 
-    // Check if `auth` is available
+  useEffect(() => {
     if (!auth) {
-      setAuthError("Authentication object is missing");
       setLoading(false);
       return;
     }
 
-    // Firebase Auth state change listener
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log("Auth state changed:", currentUser);
-
       if (currentUser) {
         setUser(currentUser);
         try {
           const idToken = await currentUser.getIdToken();
           localStorage.setItem('authToken', idToken);
           setToken(idToken);
-          fetchUserPosts(idToken);  // Fetch posts if user is authenticated
+          fetchUserPosts(idToken);
         } catch (err) {
           console.error("Failed to get ID token:", err);
-          setError("Authentication error: " + err.message);
           setLoading(false);
         }
       } else {
@@ -45,22 +56,15 @@ const Dashboard = ({ auth }) => {
         localStorage.removeItem('authToken');
         setLoading(false);
       }
-    }, (err) => {
-      console.error("Auth state change error:", err);
-      setError("Authentication observer error: " + err.message);
-      setLoading(false);
     });
 
-    // Cleanup the listener on component unmount
     return () => {
       unsubscribe();
     };
-  }, [auth,token]);
+  }, [auth]);
 
-  // Fetch posts for the authenticated user
   const fetchUserPosts = async (idToken) => {
     try {
-      console.log("Fetching user posts...");
       const response = await fetch(`${API_URL}/user/posts`, {
         headers: {
           'Authorization': `Bearer ${idToken}`,
@@ -70,58 +74,33 @@ const Dashboard = ({ auth }) => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Failed to fetch user posts (${response.status}): ${errorText}`);
+        throw new Error(`Failed to fetch user posts: ${errorText}`);
       }
 
       const data = await response.json();
-      console.log("Fetched user posts:", data);
       setUserPosts(data);
     } catch (err) {
       console.error("Error fetching posts:", err);
-      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Display loading screen if fetching data
+  const handleAnalyzePost = async (postId) => {
+    if (!token) return;
+
+    try {
+      const result = await analyzePost(postId, token);
+      console.log('Analysis result:', result);
+    } catch (error) {
+      console.error('Failed to analyze post', error);
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading">Loading dashboard...</div>
-      </div>
-    );
+    return <div className="loading-container"><div className="loading">Loading dashboard...</div></div>;
   }
 
-  // Display authentication error if no auth object
-  if (authError) {
-    return (
-      <div className="error-container">
-        <div className="error">
-          <h3>Authentication Error</h3>
-          <p>{authError}</p>
-          <Link to="/login" className="btn-primary">Go to Login</Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Display other errors (e.g., network issues, API errors)
-  if (error) {
-    return (
-      <div className="error-container">
-        <div className="error">
-          <h3>Something went wrong</h3>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary">
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // If user is not logged in
   if (!user) {
     return (
       <div className="not-logged-in">
@@ -132,33 +111,54 @@ const Dashboard = ({ auth }) => {
     );
   }
 
+  const renderPostWithAnalysis = (post) => (
+    <div key={post._id} className="post-card">
+      <Post post={post} />
+      {/* Add button to trigger analysis if required */}
+      <button onClick={() => handleAnalyzePost(post._id)}>Analyze</button>
+    </div>
+  );
+
   return (
     <div className="dashboard">
-      <div className="dashboard-header">
-        <h2>Dashboard</h2>
-        <Link to="/new-post" className="btn-primary">Create New Post</Link>
+    
+      <div className="dashboard-tabs">
+        <button 
+          className={`tab-btn ${activeTab === 'posts' ? 'active' : ''}`}
+          onClick={() => setActiveTab('posts')}
+        >
+          My Posts
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`}
+          onClick={() => setActiveTab('generator')}
+        >
+          Content Generator
+        </button>
       </div>
 
-      <div className="user-profile">
-        <h3>Your Profile</h3>
-        <div className="profile-details">
-          <p><strong>Email:</strong> {user?.email}</p>
-          <p><strong>User ID:</strong> {user?.uid}</p>
-        </div>
-      </div>
-
-      <div className="user-posts">
-        <h3>Your Posts</h3>
-        {userPosts.length === 0 ? (
-          <div className="no-posts">
-            <p>You haven't created any posts yet.</p>
-            <Link to="/new-post" className="btn-secondary">Create Your First Post</Link>
+      <div className={`tab-content ${activeTab === 'posts' ? 'active' : ''}`}>
+        {activeTab === 'posts' && (
+          <div className="user-posts">
+            <h3>Your Posts</h3>
+            {userPosts.length === 0 ? (
+              <div className="no-posts">
+                <p>You haven't created any posts yet.</p>
+                <Link to="/new-post" className="btn-secondary">Create Your First Post</Link>
+              </div>
+            ) : (
+              <div className="posts-grid">
+                {userPosts.map(post => renderPostWithAnalysis(post))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="posts-grid">
-            {userPosts.map(post => (
-              <Post key={post._id} post={post} />
-            ))}
+        )}
+      </div>
+
+      <div className={`tab-content ${activeTab === 'generator' ? 'active' : ''}`}>
+        {activeTab === 'generator' && (
+          <div className="content-generator-section">
+            <TextGenerator token={token} />
           </div>
         )}
       </div>

@@ -1,0 +1,271 @@
+/* Base styles */
+.profile-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-heading {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+  }
+  
+  .profile-email {
+    font-size: 16px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #555;
+  }
+  
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .profile-label {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .profile-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .profile-input:focus {
+    border-color: #007bff;
+  }
+  
+  .profile-update-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-update-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .profile-logout-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-logout-btn:hover {
+    background-color: #c82333;
+  }
+  
+  .profile-loading,
+  .profile-not-loggedin {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 100px;
+    color: #666;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .profile-container {
+      margin: 30px 20px;
+      padding: 15px;
+    }
+  
+    .profile-heading {
+      font-size: 24px;
+    }
+  
+    .profile-email {
+      font-size: 14px;
+    }
+  
+    .profile-input {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  
+    .profile-update-btn,
+    .profile-logout-btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .profile-container {
+      margin: 20px 10px;
+      padding: 10px;
+    }
+  
+    .profile-heading {
+      font-size: 22px;
+    }
+  
+    .profile-email {
+      font-size: 13px;
+    }
+  
+    .profile-label {
+      font-size: 13px;
+    }
+  
+    .profile-input {
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+  
+    .profile-update-btn,
+    .profile-logout-btn {
+      font-size: 13px;
+      padding: 8px;
+    }
+  }
+  /* Profile.css */
+
+.profile-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #fafafa;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-heading {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-email {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .profile-label {
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+    color: #333;
+  }
+  
+  .profile-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  .profile-update-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-update-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .profile-success-message {
+    color: #4caf50;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+  }
+  
+  .profile-logout-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 30px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .profile-logout-btn:hover {
+    background-color: #e53935;
+  }
+  
+  .profile-loading,
+  .profile-not-loggedin {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 50px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .profile-container {
+      margin: 20px;
+      padding: 16px;
+    }
+  
+    .profile-heading {
+      font-size: 24px;
+    }
+  
+    .profile-input {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  
+    .profile-update-btn,
+    .profile-logout-btn {
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+  }
+  
+  

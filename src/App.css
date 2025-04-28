@@ -9,8 +9,9 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: #333;
-  background-color: #f8f9fa;
+  background-color: #e3f2fd; /* <<< Updated to a soft blue */
 }
+
 
 .container {
   max-width: 1000px;
